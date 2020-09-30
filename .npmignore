@@ -1,0 +1,10 @@
+.idea/
+coverage/
+example/
+src/
+tests/
+.babelrc
+.editorconfig
+.gitignore
+jest.config.js
+tsconfig.json

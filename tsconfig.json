@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "outDir": "./lib",
+    "target": "es5",
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": true,
+    "declaration": true,
+    "lib": [
+      "es2015",
+      "dom"
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "compileOnSave": false
+}

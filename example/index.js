@@ -1,6 +1,3 @@
-# @bfun/fetch
-
-```javascript
 import { fetch, IMethods } from '@bfun/fetch';
 
 const params = {
@@ -11,4 +8,3 @@ const params = {
 fetch(params).then(res => {
     console.log(res);
 });
-```
