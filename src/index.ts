@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 const isClientEnv = typeof window === 'object';
 const isEmpty = (x: any) => {
@@ -8,11 +8,6 @@ const defaultOptions = {
     timeout: 10000,
 };
 
-export enum IMethods {
-    GET = 'GET',
-    POST = 'POST',
-}
-
 export function toKvp(query: { [key: string]: any } = {}): string {
     return Object
         .keys(query)
@@ -21,73 +16,60 @@ export function toKvp(query: { [key: string]: any } = {}): string {
         .join('&');
 }
 
-export interface IAxiosOptions {
-    url: string,
-    method?: IMethods,
-    timeout?: number,
-    params?: object,
-    headers?: object,
-    withCredentials?: boolean,
-    responseType?: string,
-}
-
 export interface IFetchOptions {
     include?: boolean,
     origin?: boolean,
 }
 
-export interface IFetchResponse {
-    status: number,
-    message?: string,
-    data?: any,
-}
-
-export function fetch(axiosOptions: IAxiosOptions = { url: '' }, fetchOptions?: IFetchOptions | boolean): Promise<IFetchResponse> {
+export function fetch(axiosOptions: AxiosRequestConfig, fetchOptions?: IFetchOptions | boolean): Promise<AxiosResponse> {
     const iConfig = typeof fetchOptions === 'object' ? fetchOptions : { include: !!fetchOptions };
-    return new Promise<IFetchResponse>((resolve, reject) => {
+    return new Promise<AxiosResponse>((resolve, reject) => {
         const requestOptions: { [key: string]: any } = {
             withCredentials: false,
             ...axiosOptions
         };
 
-        if (!requestOptions.url) reject({ status: -1, message: 'url is undefined' });
-        if (!requestOptions.method) requestOptions.method = IMethods.GET;
+        if (!requestOptions.url) return reject({ status: -1, message: 'url is undefined' });
+        if (!requestOptions.method) requestOptions.method = 'GET';
         if (!requestOptions.timeout) requestOptions.timeout = defaultOptions.timeout;
         if (iConfig.include) requestOptions.withCredentials = true;
 
-        if (requestOptions.method.toUpperCase() === IMethods.POST) {
+        if (requestOptions.method.toUpperCase() === 'GET') {
+            requestOptions.params = requestOptions.data;
+            delete requestOptions.data;
+        } else if (requestOptions.method.toUpperCase() === 'POST') {
             if (!requestOptions.headers) requestOptions.headers = {};
             requestOptions.headers['content-type'] = 'application/x-www-form-urlencoded';
             if (isClientEnv) {
-                requestOptions.data = (requestOptions.params instanceof window.FormData)
-                    ? requestOptions.params : toKvp(requestOptions.params);
+                requestOptions.data = (requestOptions.data instanceof window.FormData)
+                    ? requestOptions.data : toKvp(requestOptions.data);
             } else {
-                requestOptions.data = toKvp(requestOptions.params);
+                requestOptions.data = toKvp(requestOptions.data);
             }
             delete requestOptions.params;
         }
-        axios(requestOptions).then(resolve).catch((err: any) => {
-            reject({ status: 404, message: err.stack });
+        axios(requestOptions).then(resolve).catch((error: any) => {
+            return reject({ status: -500, error });
         });
     });
 }
 
-export function fetchGet(url: string, params?: object) {
+export function fetchGet(url: string, data?: object) {
     return fetch({
         url,
-        method: IMethods.GET,
-        params,
+        method: 'GET',
+        data,
     }, true).then((res: any) => {
         if (res.status !== 200) return res;
         return res.data;
     });
 }
 
-export function fetchPost(url: string, params?: object) {
+export function fetchPost(url: string, data?: object) {
     return fetch({
         url,
-        method: IMethods.POST,
-        params,
+        method: 'POST',
+        data,
     }, true).then((res: any) => {
         if (res.status !== 200) return res;
         return res.data;
