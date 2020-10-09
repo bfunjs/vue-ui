@@ -1,10 +1,11 @@
 module.exports = {
+    preset: 'ts-jest',
     verbose: true,
     testEnvironment: 'node',
     roots: [
         '<rootDir>/__tests__'
     ],
-    testRegex: '__tests__/(.+)\\.js$',
+    testRegex: '__tests__/(.+)\\.[jt]s$',
     transform: {
         '^.+\\.ts?$': 'ts-jest'
     },

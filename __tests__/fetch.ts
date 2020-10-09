@@ -1,10 +1,10 @@
-const { fetch, fetchGet, fetchPost } = require('../lib');
+import { fetch, fetchGet, fetchPost } from '../src';
 
 test('测试 fetch 函数调用', () => {
     expect.assertions(2);
     const params = {
         url: 'https://registry.npmjs.com/react/16.13.0',
-        headers: {}
+        headers: {},
     };
     return fetch(params)
         .then(res => {
@@ -26,13 +26,13 @@ test('测试 fetchPost 函数调用', () => {
     expect.assertions(1);
     return fetchPost('https://404.bfunjs.com/404', { source: 'fetch' })
         .catch(res => {
-            expect(res.status).toBe(404);
+            expect(res.status).toBe(-500);
         });
 });
 
 test('测试 fetch 参数异常', async () => {
     expect.assertions(1);
-    return fetch()
+    return fetch({})
         .catch(res => {
             expect(res.status).toBe(-1);
         });
