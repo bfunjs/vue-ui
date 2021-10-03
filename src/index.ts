@@ -21,8 +21,6 @@ export interface IFetchOptions {
     origin?: boolean,
 }
 
-export type AxiosRequestConfig = AxiosRequestConfig;
-
 export function fetch(axiosOptions: AxiosRequestConfig, fetchOptions?: IFetchOptions | boolean): Promise<AxiosResponse> {
     const iConfig = typeof fetchOptions === 'object' ? fetchOptions : { include: !!fetchOptions };
     return new Promise<AxiosResponse>((resolve, reject) => {
