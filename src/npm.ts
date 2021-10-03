@@ -26,7 +26,7 @@ export default async function (options: IFetchOptions) {
     const output = path.resolve(options.dir);
 
     const npmInfo = await fetchGet(options.url);
-    const npmRepo = await fetch({
+    const npmRepo = await fetch<any>({
         url: npmInfo.dist.tarball,
         responseType: 'stream',
     });

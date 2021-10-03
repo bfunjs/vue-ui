@@ -6,7 +6,7 @@ test('测试 fetch 函数调用', () => {
         url: 'https://registry.npmjs.com/react/16.13.0',
         headers: {},
     };
-    return fetch(params)
+    return fetch<any>(params)
         .then(res => {
             expect(res.status).toBe(200);
             expect(res.data.version).toBe('16.13.0');
