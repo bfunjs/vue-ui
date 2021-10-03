@@ -12,7 +12,7 @@ export function toKvp(query: { [key: string]: any } = {}): string {
     return Object
         .keys(query)
         .filter(key => !isEmpty(query[key]))
-        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(query[key])}`)
+        .map(key => `${ encodeURIComponent(key) }=${ encodeURIComponent(query[key]) }`)
         .join('&');
 }
 
@@ -20,6 +20,8 @@ export interface IFetchOptions {
     include?: boolean,
     origin?: boolean,
 }
+
+export type AxiosRequestConfig = AxiosRequestConfig;
 
 export function fetch(axiosOptions: AxiosRequestConfig, fetchOptions?: IFetchOptions | boolean): Promise<AxiosResponse> {
     const iConfig = typeof fetchOptions === 'object' ? fetchOptions : { include: !!fetchOptions };
@@ -37,7 +39,7 @@ export function fetch(axiosOptions: AxiosRequestConfig, fetchOptions?: IFetchOpt
         if (requestOptions.method.toUpperCase() === 'GET') {
             requestOptions.params = requestOptions.data;
             delete requestOptions.data;
-        } else if (requestOptions.method.toUpperCase() === 'POST') {
+        } else if ([ 'PUT', 'POST', 'DELETE' ].indexOf(requestOptions.method.toUpperCase()) >= 0) {
             if (!requestOptions.headers) requestOptions.headers = {};
             requestOptions.headers['content-type'] = 'application/x-www-form-urlencoded';
             if (isClientEnv) {
