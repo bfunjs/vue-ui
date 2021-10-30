@@ -1,20 +1,8 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-const isClientEnv = typeof window === 'object';
-const isEmpty = (x: any) => {
-    return [ null, undefined ].indexOf(x) !== -1;
-};
 const defaultOptions = {
     timeout: 10000,
 };
-
-export function toKvp(query: { [key: string]: any } = {}): string {
-    return Object
-        .keys(query)
-        .filter(key => !isEmpty(query[key]))
-        .map(key => `${ encodeURIComponent(key) }=${ encodeURIComponent(query[key]) }`)
-        .join('&');
-}
 
 export interface IFetchOptions {
     include?: boolean,
@@ -37,15 +25,9 @@ export function fetch<T>(axiosOptions: AxiosRequestConfig, fetchOptions?: IFetch
         if (requestOptions.method.toUpperCase() === 'GET') {
             requestOptions.params = requestOptions.data;
             delete requestOptions.data;
-        } else if ([ 'PUT', 'POST', 'DELETE' ].indexOf(requestOptions.method.toUpperCase()) >= 0) {
+        } else {
             if (!requestOptions.headers) requestOptions.headers = {};
             requestOptions.headers['content-type'] = 'application/x-www-form-urlencoded';
-            if (isClientEnv) {
-                requestOptions.data = (requestOptions.data instanceof window.FormData)
-                    ? requestOptions.data : toKvp(requestOptions.data);
-            } else {
-                requestOptions.data = toKvp(requestOptions.data);
-            }
             delete requestOptions.params;
         }
         axios(requestOptions).then(resolve).catch((error: any) => {
